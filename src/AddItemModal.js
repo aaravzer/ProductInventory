@@ -1,9 +1,6 @@
-// import react
 import React, { useState } from "react";
 
-// modal component
 const AddItemModal = ({ isOpen, onClose, onSubmit }) => {
-  // set default state for all input forms inside the modal
   const [productName, setProductName] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
@@ -11,7 +8,6 @@ const AddItemModal = ({ isOpen, onClose, onSubmit }) => {
   const [inventoryLeft, setInventoryLeft] = useState("");
   const [supplier, setSupplier] = useState("");
 
-  // handles the creation of a new item
   const handleSubmit = () => {
     const newItem = {
       productName,
@@ -24,13 +20,12 @@ const AddItemModal = ({ isOpen, onClose, onSubmit }) => {
     onSubmit(newItem);
   };
 
-  // does not return anything until modal is closed/form is submitted
   if (!isOpen) return null;
 
   return (
     <div className="modal is-active">
       <div className="modal-background" onClick={onClose}></div>
-      <div className="modal-card" style={{ width: "600px" }}>
+      <div className="modal-card is-full-mobile is-half-tablet is-one-third-desktop">
         <header className="modal-card-head">
           <p className="modal-card-title">Add New Item</p>
           <button
@@ -121,7 +116,7 @@ const AddItemModal = ({ isOpen, onClose, onSubmit }) => {
           <button className="button is-success" onClick={handleSubmit}>
             Add Item
           </button>
-          <button className="button" onClick={onClose}>
+          <button className="button is-light" onClick={onClose}>
             Cancel
           </button>
         </footer>
