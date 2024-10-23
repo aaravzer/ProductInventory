@@ -1,7 +1,5 @@
-//import react
 import React from "react";
 
-// button component(the functions declared in Grid are used as props here)
 const ButtonGroup = ({ onAddItem, onDeleteItems }) => {
   return (
     <div className="buttons mb-4 is-centered">
