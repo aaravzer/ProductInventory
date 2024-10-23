@@ -1,4 +1,3 @@
-// Import packages needed for the grid and the other components
 import React, { useCallback, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import AddItemModal from "./AddItemModal";
@@ -171,12 +170,11 @@ const initialData = [
 
 // Grid Component
 const Grid = () => {
-  // Hooks saving state of rowData, current rows selected, and the visibility of the modal
   const [rowData, setRowData] = useState(initialData);
   const [gridApi, setGridApi] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [validationError, setValidationError] = useState(""); 
 
-  // Configure the six columns
   const columnDefs = useMemo(
     () => [
       {
@@ -221,38 +219,43 @@ const Grid = () => {
     []
   );
 
-  // grid set-up
   const onGridReady = useCallback((params) => {
     setGridApi(params.api);
   }, []);
 
-  // open modal
-  const handleOpenModal = () => {
-    setShowModal(true);
-  };
+  const handleOpenModal = () => setShowModal(true);
 
-  // close modal
   const handleCloseModal = () => {
     setShowModal(false);
+    setValidationError(""); 
   };
 
-  // handle adding new row
+  const validateNewItem = (newItem) => {
+    for (const field in newItem) {
+      if (!newItem[field]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleAddNewItem = (newItem) => {
-    const updatedRowData = [...rowData, newItem];
-    setRowData(updatedRowData);
-    handleCloseModal();
+    if (validateNewItem(newItem)) {
+      const updatedRowData = [...rowData, newItem];
+      setRowData(updatedRowData);
+      handleCloseModal();
+    } else {
+      setValidationError("All fields must be filled out!"); 
+    }
   };
 
-  // remove selected row(grid.Api checks what rows are selected)
   const handleRemoveRows = () => {
     const selectedRows = gridApi.getSelectedRows();
 
-    // remove row
     const updatedRowData = rowData.filter((row) => !selectedRows.includes(row));
     setRowData(updatedRowData);
   };
 
-  // persist user edit by updating the row data state after user edits the row
   const handleCellValueChanged = useCallback(
     (event) => {
       const updatedData = [...rowData];
@@ -273,11 +276,23 @@ const Grid = () => {
         onAddItem={handleOpenModal}
         onDeleteItems={handleRemoveRows}
       />
+
       <AddItemModal
         isOpen={showModal}
         onClose={handleCloseModal}
         onSubmit={handleAddNewItem}
       />
+
+      {validationError && (
+        <div className="notification is-danger">
+          <button
+            className="delete"
+            onClick={() => setValidationError("")}
+          ></button>
+          {validationError}
+        </div>
+      )}
+
       <div
         className="ag-theme-quartz"
         style={{ height: "400px", width: "100%" }}
@@ -293,4 +308,5 @@ const Grid = () => {
     </div>
   );
 };
+
 export default Grid;
